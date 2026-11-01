@@ -1,12 +1,11 @@
 ---
 import { siteConfig } from '../config';
-import { getCommitActivity, getFeatured, getGithubRepos, getRecentRepos } from '../lib/github';
+import { getFeatured, getGithubRepos, getRecentRepos } from '../lib/github';
 import '../styles/global.css';
 
 const repos = await getGithubRepos();
-const activity = await getCommitActivity();
 const featured = await getFeatured(repos);
-const recent = getRecentRepos(repos);
+const recent = await getRecentRepos(repos);
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString('en-NG', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 const linkedinVisible = siteConfig.links.linkedin.verified;
 const emailVisible = Boolean(siteConfig.links.email.value) && !siteConfig.links.email.placeholder;
@@ -44,13 +43,8 @@ const emailVisible = Boolean(siteConfig.links.email.value) && !siteConfig.links.
         <div class="hero-actions">
           <a class="button button-primary" href="#work">View work <span aria-hidden="true">↓</span></a>
           <a class="button button-secondary" href={siteConfig.links.github} target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
-          <a class="button button-secondary" href="/cv.pdf" download>Download CV <span aria-hidden="true">↓</span></a>
         </div>
         <div class="hero-meta"><span>PRODUCT · WEB3 · SOFTWARE</span></div>
-        <div class="commit-stat" aria-label={`GitHub commit activity: ${activity.complete ? '' : 'at least '}${activity.count} public commits in the rolling 30 days ending ${activity.windowEnd}`}>
-          <strong>{activity.count}{!activity.complete && '+'}</strong>
-          <span>public commits · rolling 30 days</span>
-        </div>
       </section>
 
       <section class="section wrap" id="work" aria-labelledby="work-title">
@@ -63,7 +57,6 @@ const emailVisible = Boolean(siteConfig.links.email.value) && !siteConfig.links.
               <p class="project-problem">{project.problem}</p>
               <p class="project-description">{project.description}</p>
               <p class="contribution"><span>MY PART</span>{project.contribution}</p>
-              <div class="tag-row">{project.tags.map((tag) => <span class="tag">{tag}</span>)}</div>
               <div class="card-link">
                 {project.repo ? <a href={project.repo.html_url} target="_blank" rel="noreferrer">View repository <span aria-hidden="true">↗</span></a> : <span class="private-note">Product work, private by design</span>}
               </div>
@@ -74,25 +67,24 @@ const emailVisible = Boolean(siteConfig.links.email.value) && !siteConfig.links.
 
       <section class="section repo-section" aria-labelledby="repos-title">
         <div class="wrap">
-          <div class="section-heading"><div><p class="eyebrow">FROM GITHUB</p><h2 id="repos-title">Recent public repos.</h2></div><a class="text-link" href={siteConfig.links.github} target="_blank" rel="noreferrer">All repositories <span aria-hidden="true">↗</span></a></div>
+          <div class="section-heading"><div><p class="eyebrow">GITHUB PROJECTS</p><h2 id="repos-title">Latest Build and Contributions</h2></div><a class="text-link" href={siteConfig.links.github} target="_blank" rel="noreferrer">All repositories <span aria-hidden="true">↗</span></a></div>
           <div class="commit-graph-card" aria-label="GitHub contribution activity chart">
             <img src="https://ghchart.rshah.org/0xdfinity" alt="Public GitHub contribution grid for 0xdfinity" loading="lazy" />
             <span>GITHUB CONTRIBUTION ACTIVITY</span>
           </div>
-          <p class="repo-activity-note">Counted from GitHub commit search for commits authored by this account on public repositories; SHA duplicates removed. GitHub Search API exposes only its first 1,000 results.</p>
           {recent.length ? <div class="repo-list">
             {recent.map((repo) => <a class="repo-row" href={repo.html_url} target="_blank" rel="noreferrer">
-              <span class="repo-main"><strong>{repo.name}</strong><span>{repo.description || 'Public project on GitHub.'}</span></span>
-              <span class="repo-language">{repo.language || 'Repository'}</span><time datetime={repo.pushed_at}>{fmtDate(repo.pushed_at)}</time><span class="repo-arrow" aria-hidden="true">↗</span>
+              <span class="repo-main"><strong>{repo.name}</strong>{repo.readmeDescription && <span>{repo.readmeDescription}</span>}</span>
+              <time datetime={repo.pushed_at}>{fmtDate(repo.pushed_at)}</time><span class="repo-arrow" aria-hidden="true">↗</span>
             </a>)}
-          </div> : <p class="empty-repos">The public repo feed will appear here when GitHub is reachable at build time.</p>}
+          </div> : <p class="empty-repos">Public repositories will appear here when GitHub is reachable.</p>}
         </div>
       </section>
 
       <section class="section wrap about-section" id="about" aria-labelledby="about-title">
         <div class="section-heading"><div><p class="eyebrow">THE THROUGH LINE</p><h2 id="about-title">Product first. Built hands-on.</h2></div><span class="section-index">02 / ABOUT</span></div>
         <div class="about-content">
-          <p class="about-copy">I started in project management, then picked up coding and smart contracts to get closer to the work itself. In web3, I worked across business development and community, including growing Maincard’s community to 1,500+ members. Now I build products end to end, with <strong>edQorta</strong>, a private social real estate startup in Nigeria, among the problems I’m working on.</p>
+          <p class="about-copy">I started in project management, then picked up coding and smart contracts to get closer to the work itself. In web3, I’ve worked across business development and community building, helping products connect with the people who use them. Now I build products end to end, including <strong>edQorta</strong>, a real-estate platform I’m preparing to launch.</p>
           <div class="skills"><span class="eyebrow">TOOLS & PRACTICE</span><p>Solidity <i>·</i> TypeScript <i>·</i> JavaScript <i>·</i> Python <i>·</i> React <i>·</i> Node.js <i>·</i> Product Management <i>·</i> Business Development</p></div>
         </div>
       </section>
