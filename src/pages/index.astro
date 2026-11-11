@@ -9,6 +9,8 @@ const recent = await getRecentRepos(repos);
 const fmtDate = (iso: string) => new Date(iso).toLocaleDateString('en-NG', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 const linkedinVisible = siteConfig.links.linkedin.verified;
 const emailVisible = Boolean(siteConfig.links.email.value) && !siteConfig.links.email.placeholder;
+const live = repos.length > 0;
+const syncedLabel = new Date().toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
 ---
 <!doctype html>
 <html lang="en">
@@ -20,7 +22,7 @@ const emailVisible = Boolean(siteConfig.links.email.value) && !siteConfig.links.
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Atunde Suleiman Shola — I build and ship products and solutions end to end" />
     <meta property="og:description" content="Product thinking, execution, and hands-on building. Selected work by Atunde Suleiman Shola." />
-    <meta property="og:url" content="https://atunde-ss.vercel.app" />
+    <meta property="og:url" content="https://0xdfinity.github.io/Portfolio/" />
     <title>Atunde Suleiman Shola — I build and ship products and solutions end to end</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
@@ -44,7 +46,7 @@ const emailVisible = Boolean(siteConfig.links.email.value) && !siteConfig.links.
           <a class="button button-primary" href="#work">View work <span aria-hidden="true">↓</span></a>
           <a class="button button-secondary" href={siteConfig.links.github} target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
         </div>
-        <div class="hero-meta"><span>PRODUCT · WEB3 · SOFTWARE</span></div>
+        <div class="hero-meta"><span>PRODUCT · WEB3 · SOFTWARE</span><span class="sync" data-live={live}><span class="status-mark" aria-hidden="true"></span>{live ? `Self-updating · synced ${syncedLabel}` : 'Offline copy · reconnecting'}</span></div>
       </section>
 
       <section class="section wrap" id="work" aria-labelledby="work-title">

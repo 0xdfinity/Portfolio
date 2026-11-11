@@ -29,6 +29,9 @@ a { color: inherit; }
 .hero { padding-block: clamp(74px, 12vw, 146px) clamp(56px, 8vw, 92px); }
 .eyebrow { margin: 0; color: var(--teal); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .72rem; font-weight: 650; letter-spacing: .105em; }
 .status-mark { display: inline-block; width: 7px; height: 7px; margin-right: 9px; border-radius: 50%; background: var(--teal); vertical-align: 1px; }
+.sync { display: inline-flex; align-items: center; color: var(--muted); }
+.sync[data-live='true'] .status-mark { animation: sync-pulse 2.4s ease-in-out infinite; }
+@keyframes sync-pulse { 50% { opacity: .3; } }
 h1 { max-width: 930px; margin: 25px 0 0; font-size: clamp(2.9rem, 8vw, 6.3rem); font-weight: 640; letter-spacing: -.065em; line-height: .99; }
 .hero-copy { max-width: 565px; margin: 27px 0 0; color: var(--muted); font-size: clamp(1.05rem, 2vw, 1.22rem); }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 32px; }
@@ -119,4 +122,4 @@ h1 { max-width: 930px; margin: 25px 0 0; font-size: clamp(2.9rem, 8vw, 6.3rem); 
   .hero-actions { gap: 8px; }
   .button { padding-inline: 12px; gap: 10px; font-size: .82rem; }
 }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }

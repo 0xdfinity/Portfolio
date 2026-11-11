@@ -1,4 +1,4 @@
-# Deploy to GitHub and Vercel
+# Deploy to GitHub Pages
 
 ## Push the project to your GitHub account
 
@@ -14,21 +14,22 @@ git remote add origin https://github.com/0xdfinity/portfolio.git
 git push -u origin main
 ```
 
-## Import it to Vercel
+## Enable GitHub Pages
 
-1. Sign in at https://vercel.com/dashboard.
-2. Select **Add New...** then **Project** (or **Create New** then **Project**), and connect GitHub if asked.
-3. Find `0xdfinity/portfolio` in **Import Git Repository**, then click **Import**.
-4. Keep the detected **Astro** framework, set **Root Directory** to `./` if prompted, and leave the build command as `npm run build` and output directory as Astro's default. Static Astro deploys to Vercel without an adapter.
-5. If you want authenticated GitHub API requests, add `GITHUB_TOKEN` in **Project → Settings → Environment Variables**, select **Production** (and Preview if wanted), then **Save**. Use a fine-grained, read-only token with access only to the repositories needed. Trigger a redeploy after changing environment variables. Public repo fetches work without this token; never commit a token or put one in browser code.
-6. Click **Deploy**. This starts the first Vercel deployment. Later pushes to the connected production branch trigger deployments automatically.
+1. In the `Portfolio` repo, open **Settings → Pages**.
+2. Under **Build and deployment → Source**, choose **GitHub Actions**. The included `.github/workflows/pages.yml` builds the Astro site and deploys it; no branch/folder selection is needed.
+3. Push to `main` (or run the workflow manually) to trigger the first deploy. The live URL is `https://0xdfinity.github.io/Portfolio/`, matching `site` and `base` in `astro.config.mjs`.
 
-## Daily repo refresh
+The build fetches public GitHub data anonymously by default. For authenticated, higher-rate-limit reads, the workflow already passes the automatic `GITHUB_TOKEN` to the build step — no secret to create. Never commit a token or put one in browser code.
 
-The static page fetches the public repo list and each featured public README at build time; it does not make GitHub requests in visitors' browsers. `.github/workflows/daily-rebuild.yml` runs at 03:00 UTC daily and manually on demand. To connect the scheduled workflow to Vercel, create a deploy hook after importing: open the project in Vercel, choose **Settings → Git → Deploy Hooks**, enter a name such as `daily-rebuild`, choose the production branch (usually `main`), then click **Create Hook**. Copy its URL. In GitHub, open the `portfolio` repo and choose **Settings → Secrets and variables → Actions → New repository secret**. Name it `VERCEL_DEPLOY_HOOK`, paste the hook URL as its value, and click **Add secret**. The workflow POSTs to that hook daily, which starts a fresh build and refreshes the repo content. Treat the hook URL like a password. Without this secret the scheduled workflow deliberately fails with a clear error, but ordinary Git-push deployments still work.
+## Daily auto-refresh
+
+The page fetches your public repo list and each featured README at build time and bakes them into static HTML; visitors' browsers never call GitHub. To keep itself current, `.github/workflows/pages.yml` rebuilds and redeploys on a schedule (`0 3 * * *`, daily at 03:00 UTC), on every push to `main`, and on manual dispatch. Each run re-fetches GitHub, so new repositories and README edits appear within a day with no action from you. The hero carries a "Self-updating · synced {date}" stamp set at build time.
+
+GitHub pauses scheduled workflows after 60 days of no repository activity; any push or manual run reactivates them. To refresh on demand, open the repo's **Actions** tab, select **Deploy portfolio to GitHub Pages**, and click **Run workflow**.
 
 ## Editing your portfolio details
 
 Edit `src/config.ts` to change your headline, social links, featured repository names, or the edQorta case-study copy. LinkedIn is present in config but hidden on the page until `verified` is set to `true`; the email link stays hidden until you replace its empty placeholder with a real address and set `placeholder` to `false`. `public/cv.pdf` is the downloaded CV file. Commit and push edits to publish them.
 
-The project uses Astro 7 and requires Node.js 22.23.4 or newer. In Vercel, select Node 22 under **Project → Settings → General → Node.js Version** (or use the latest supported major).
+The project uses Astro 7 and requires Node.js 22.23.4 or newer. The Pages workflow builds with Node 22 (`actions/setup-node`); locally, use Node 22 or newer.
